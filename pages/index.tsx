@@ -1,5 +1,6 @@
 import Head from "next/head";
 import * as React from "react";
+import Navbar from "../components/Navbar";
 
 const Home: React.FC = () => {
   return (
@@ -11,6 +12,7 @@ const Home: React.FC = () => {
         <title>Aufgaben</title>
       </Head>
       <main>
+        <Navbar/>
         <h1>Aufgaben</h1>
       </main>
     </>
