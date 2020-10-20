@@ -5,3 +5,5 @@ export type AufgabenTodoItem = {
     completed: boolean;
   };
 };
+
+export type AufgabenTodosRecord = Record<string, TodoItem>;

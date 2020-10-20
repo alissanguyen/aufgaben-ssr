@@ -2,16 +2,18 @@ import { NextPageContext } from "next";
 import Head from "next/head";
 import * as React from "react";
 import Navbar from "../components/Navbar";
-import { AufgabenTodoItem } from "../types";
-import { minifyRecords, table } from "./api/utils/Airtable";
+import { AufgabenTodoItem, AufgabenTodosRecord } from "../types";
+import { getMinifiedRecord, table } from "./api/utils/Airtable";
+import TodoList from "../components/TodoList";
+import { TodosProvider } from "../components/TodosContext";
 
 interface HomeProps {
   err?: string;
-  initialTodos: AufgabenTodoItem[];
+  initialTodos: AufgabenTodosRecord;
 }
 
 const Home: React.FC<HomeProps> = (props) => {
-  const { initialTodos } = props;
+  console.log(props.initialTodos);
 
   return (
     <>
@@ -21,38 +23,36 @@ const Home: React.FC<HomeProps> = (props) => {
         <meta name="theme-color" content="#000000" />
         <title>Aufgaben</title>
       </Head>
-      <main>
-        <Navbar />
-        <h1>Aufgaben </h1>
-        <ul>
-          {initialTodos.map((todo) => {
-            return (
-              <li key={todo.id}>
-                {todo.fields.description} |{" "}
-                {todo.fields.completed ? "DONE" : "INCOMPLETE"}
-              </li>
-            );
-          })}
-        </ul>
-      </main>
+      <TodosProvider initialTodos={props.initialTodos}>
+        <main>
+          <Navbar />
+          <TodoList />
+        </main>
+      </TodosProvider>
     </>
   );
 };
 
 export async function getServerSideProps(context: NextPageContext) {
   try {
-    const todos = await table.select({}).firstPage();
+    const todos = await table.select().firstPage();
+    const initialTodos = todos
+      .map(getMinifiedRecord)
+      .reduce<AufgabenTodosRecord>((acc, cur, arr) => {
+        acc[cur.id] = cur;
+        return acc;
+      }, {});
     return {
       props: {
-        initialTodos: minifyRecords(todos),
+        initialTodos,
       },
     };
   } catch (err) {
-    console.error(err);
     return {
       props: {
-        err: "Something went wrong",
-        initialTodos: [],
+        session: null,
+        initialTodos: {},
+        error: "Something went wrong",
       },
     };
   }
