@@ -1,4 +1,4 @@
-import { getMinifiedRecord, table } from "./utils/airTable";
+import { getMinifiedRecord, table } from "./utils/Airtable";
 
 const deleteTodo = async (req, res) => {
   const { id } = req.body;

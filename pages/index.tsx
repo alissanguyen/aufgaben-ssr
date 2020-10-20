@@ -3,7 +3,7 @@ import Head from "next/head";
 import * as React from "react";
 import Navbar from "../components/Navbar";
 import { AufgabenTodoItem } from "../types";
-import { minifyRecords, table } from "./api/utils/airTable";
+import { minifyRecords, table } from "./api/utils/Airtable";
 
 interface HomeProps {
   err?: string;
@@ -23,11 +23,11 @@ const Home: React.FC<HomeProps> = (props) => {
       </Head>
       <main>
         <Navbar />
-        <h1>Aufgaben</h1>
+        <h1>Aufgaben </h1>
         <ul>
           {initialTodos.map((todo) => {
             return (
-              <li>
+              <li key={todo.id}>
                 {todo.fields.description} |{" "}
                 {todo.fields.completed ? "DONE" : "INCOMPLETE"}
               </li>

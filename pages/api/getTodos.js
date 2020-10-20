@@ -1,4 +1,4 @@
-import { minifyRecords, table } from "./utils/airTable";
+import { minifyRecords, table } from "./utils/Airtable";
 
 const getTodos = async (req, res) => {
     try {

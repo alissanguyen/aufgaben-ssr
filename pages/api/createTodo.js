@@ -1,4 +1,4 @@
-import { table } from "./utils/airTable";
+import { table } from "./utils/Airtable";
 
 const createTodo = async (req, res) => {
   const { description } = req.body;

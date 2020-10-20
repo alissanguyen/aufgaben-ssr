@@ -1,4 +1,4 @@
-import { getMinifiedRecord, table } from "./utils/airTable";
+import { getMinifiedRecord, table } from "./utils/Airtable";
 
 const updateTodo = async (req, res) => {
   const { id, fields } = req.body;
