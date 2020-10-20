@@ -1,7 +1,9 @@
 import { getMinifiedRecord, table } from "./utils/Airtable";
+import auth0 from "./utils/auth0";
 
-const updateTodo = async (req, res) => {
+const updateTodo = auth0.requireAuthentication(async (req, res) => {
   const { id, fields } = req.body;
+  const {user} = await auth0.getSession(req);
 
   // We don't want to let users update todos to have blank descriptions.
   if (!fields.description) {
@@ -20,6 +22,6 @@ const updateTodo = async (req, res) => {
     res.statusCode = 500;
     res.json({ msg: "Something went wrong" });
   }
-};
+});
 
 export default updateTodo;

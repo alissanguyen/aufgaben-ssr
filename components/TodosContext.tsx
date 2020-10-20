@@ -19,6 +19,9 @@ export const TodosProvider: React.FC<{
 }> = (props) => {
   const [todos, setTodos] = React.useState(props.initialTodos);
 
+  /**
+   * Handle when users refresh the page
+   */
   const refreshTodos = async () => {
     try {
       const res = await fetch("/api/getTodos");

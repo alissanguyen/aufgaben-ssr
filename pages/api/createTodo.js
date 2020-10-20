@@ -1,7 +1,9 @@
 import { table } from "./utils/Airtable";
+import auth0 from "./utils/auth0";
 
-const createTodo = async (req, res) => {
+const createTodo = auth0.requireAuthentication(async (req, res) => {
   const { description } = req.body;
+  const { user } = await auth0.getSession(req);
 
   // We don't want to let users create todos without a description.
   if (!description) {
@@ -11,7 +13,7 @@ const createTodo = async (req, res) => {
   }
 
   try {
-    const createdRecords = await table.create([{ fields: { description } }]);
+    const createdRecords = await table.create([{ fields: { description, userId: user.sub } }]);
     const createdRecord = {
       id: createdRecords[0].id,
       fields: {
@@ -25,6 +27,6 @@ const createTodo = async (req, res) => {
     res.statusCode = 500;
     res.json({ msg: "Something went wrong" });
   }
-};
+});
 
 export default createTodo;

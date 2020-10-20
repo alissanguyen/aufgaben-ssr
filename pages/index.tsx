@@ -13,11 +13,10 @@ import auth0 from "./api/utils/auth0";
 interface HomeProps {
   err?: string;
   initialTodos: AufgabenTodosRecord;
-  session: ISession | null | undefined
+  session: ISession | null | undefined;
 }
 
 const Home: React.FC<HomeProps> = (props) => {
-
   return (
     <>
       <Head>
@@ -28,13 +27,9 @@ const Home: React.FC<HomeProps> = (props) => {
       </Head>
       <TodosProvider initialTodos={props.initialTodos}>
         <main>
-          <Navbar session={props.session}/>
+          <Navbar session={props.session} />
           <h1 className="text-2xl text-center mb-4">My Todos</h1>
-          {
-          props.session ? (
-            <AddTodoForm/>
-          ) : ''
-        }
+          {props.session ? <AddTodoForm /> : null}
           <TodoList />
         </main>
       </TodosProvider>
@@ -46,13 +41,17 @@ export async function getServerSideProps(context: NextPageContext) {
   const session = context.req ? await auth0.getSession(context.req) : null;
 
   try {
-    const todos = session ?  await table.select().firstPage() : [] //TODO: Invite new user to register for an account
+    const todos = session
+      ? await table
+          .select({ filterByFormula: `userId = "${session.user.sub}"` })
+          .firstPage()
+      : []; //TODO: Invite new user to register for an account
     const initialTodos = todos
       .map(getMinifiedRecord)
-      .reduce<AufgabenTodosRecord>((acc, cur, arr) => {
+      .reduce<AufgabenTodosRecord>((acc, cur) => {
         acc[cur.id] = cur;
         return acc;
-      }, {}); 
+      }, {});
     return {
       props: {
         initialTodos,
@@ -60,9 +59,10 @@ export async function getServerSideProps(context: NextPageContext) {
       },
     };
   } catch (err) {
+    console.error(err)
     return {
       props: {
-        session: null,
+        session,
         initialTodos: {},
         error: "Something went wrong",
       },
