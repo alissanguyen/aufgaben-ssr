@@ -10,7 +10,7 @@ export interface TodosContextValue {
   addTodo: (description: string) => Promise<void>;
 }
 
-const TodosContext = React.createContext<TodosContextValue | undefined>(
+export const TodosContext = React.createContext<TodosContextValue | undefined>(
   undefined
 );
 
@@ -53,6 +53,7 @@ export const TodosProvider: React.FC<{
       });
     } catch (err) {
       console.error(err);
+      throw err
     }
   };
 
@@ -75,6 +76,7 @@ export const TodosProvider: React.FC<{
       });
     } catch (err) {
       console.error(err);
+      throw err
     }
   };
 
@@ -103,6 +105,7 @@ export const TodosProvider: React.FC<{
       });
     } catch (err) {
       console.error(err);
+      throw err
     }
   };
 

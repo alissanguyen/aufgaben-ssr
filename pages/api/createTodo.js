@@ -14,7 +14,10 @@ const createTodo = async (req, res) => {
     const createdRecords = await table.create([{ fields: { description } }]);
     const createdRecord = {
       id: createdRecords[0].id,
-      fields: createdRecords[0].fields,
+      fields: {
+        completed: false,
+        ...createdRecords[0].fields,
+      }
     };
     res.statusCode = 200;
     res.json(createdRecord);

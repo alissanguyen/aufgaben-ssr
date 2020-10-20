@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import { AufgabenTodoItem, AufgabenTodosRecord } from "../types";
 import { getMinifiedRecord, table } from "./api/utils/Airtable";
 import TodoList from "../components/TodoList";
+import AddTodoForm from "../components/AddTodoForm";
 import { TodosProvider } from "../components/TodosContext";
 import { ISession } from "@auth0/nextjs-auth0/dist/session/session";
 import auth0 from "./api/utils/auth0";
@@ -28,6 +29,12 @@ const Home: React.FC<HomeProps> = (props) => {
       <TodosProvider initialTodos={props.initialTodos}>
         <main>
           <Navbar session={props.session}/>
+          <h1 className="text-2xl text-center mb-4">My Todos</h1>
+          {
+          props.session ? (
+            <AddTodoForm/>
+          ) : ''
+        }
           <TodoList />
         </main>
       </TodosProvider>
