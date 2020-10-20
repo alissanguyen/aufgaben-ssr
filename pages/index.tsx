@@ -6,14 +6,16 @@ import { AufgabenTodoItem, AufgabenTodosRecord } from "../types";
 import { getMinifiedRecord, table } from "./api/utils/Airtable";
 import TodoList from "../components/TodoList";
 import { TodosProvider } from "../components/TodosContext";
+import { ISession } from "@auth0/nextjs-auth0/dist/session/session";
+import auth0 from "./api/utils/auth0";
 
 interface HomeProps {
   err?: string;
   initialTodos: AufgabenTodosRecord;
+  session: ISession | null | undefined
 }
 
 const Home: React.FC<HomeProps> = (props) => {
-  console.log(props.initialTodos);
 
   return (
     <>
@@ -25,7 +27,7 @@ const Home: React.FC<HomeProps> = (props) => {
       </Head>
       <TodosProvider initialTodos={props.initialTodos}>
         <main>
-          <Navbar />
+          <Navbar session={props.session}/>
           <TodoList />
         </main>
       </TodosProvider>
@@ -34,17 +36,20 @@ const Home: React.FC<HomeProps> = (props) => {
 };
 
 export async function getServerSideProps(context: NextPageContext) {
+  const session = context.req ? await auth0.getSession(context.req) : null;
+
   try {
-    const todos = await table.select().firstPage();
+    const todos = session ?  await table.select().firstPage() : [] //TODO: Invite new user to register for an account
     const initialTodos = todos
       .map(getMinifiedRecord)
       .reduce<AufgabenTodosRecord>((acc, cur, arr) => {
         acc[cur.id] = cur;
         return acc;
-      }, {});
+      }, {}); 
     return {
       props: {
         initialTodos,
+        session,
       },
     };
   } catch (err) {
