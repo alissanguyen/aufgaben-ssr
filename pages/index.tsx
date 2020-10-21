@@ -31,6 +31,7 @@ const Home: React.FC<HomeProps> = (props) => {
           <h1 className="text-2xl text-center mb-4">My Todos</h1>
           {props.session ? <AddTodoForm /> : null}
           <TodoList />
+          {!props.session ? <p>You should log in to save your todos</p> : null}
         </main>
       </TodosProvider>
     </>

@@ -1,7 +1,7 @@
+import ownsRecord from "./middleware/OwnsRecord";
 import { getMinifiedRecord, table } from "./utils/Airtable";
-import auth0 from "./utils/auth0";
 
-const deleteTodo = auth0.requireAuthentication(async (req, res) => {
+const deleteTodo = ownsRecord(async (req, res) => {
   const { id } = req.body;
 
   try {

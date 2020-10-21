@@ -1,7 +1,9 @@
+import ownsRecord from "./middleware/OwnsRecord";
 import { getMinifiedRecord, table } from "./utils/Airtable";
 import auth0 from "./utils/auth0";
 
-const updateTodo = auth0.requireAuthentication(async (req, res) => {
+
+const updateTodo = ownsRecord(async (req, res) => {
   const { id, fields } = req.body;
   const {user} = await auth0.getSession(req);
 
