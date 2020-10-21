@@ -20,7 +20,8 @@ const Home: React.FC<HomeProps> = (props) => {
   return (
     <>
       <Head>
-        <link rel="icon" href="/favicon.ico" />
+      
+        <link rel="icon" href="/logo.svg"/>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#000000" />
         <title>Aufgaben</title>
@@ -31,7 +32,7 @@ const Home: React.FC<HomeProps> = (props) => {
           <h1 className="text-2xl text-center mb-4">My Todos</h1>
           {props.session ? <AddTodoForm /> : null}
           <TodoList />
-          {!props.session ? <p>You should log in to save your todos</p> : null}
+          {!props.session ? <p className="text-center">Have an account? ➜ Login</p> : null}
         </main>
       </TodosProvider>
     </>

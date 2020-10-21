@@ -20,12 +20,17 @@ const Navbar: React.FC<Props> = (props) => {
             Logout
           </a>
           ) : (
+          <div>
             <a
             href="/api/login"
             className=" rounded bg-blue-500 hover:bg-blue-600 text-white py-2 px-4"
           >
             Login
           </a>
+          <a href="/api/register" className=" rounded bg-blue-500 hover:bg-blue-600 text-white py-2 px-4">
+          Register
+          </a>
+          </div>
           )
         }
 
