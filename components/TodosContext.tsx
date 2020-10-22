@@ -1,5 +1,7 @@
 import * as React from "react";
-import { AufgabenTodoItem, AufgabenTodosRecord } from "../types";
+import { AufgabenTodoItem, AufgabenTodoItemFields, AufgabenTodosRecord } from "../types";
+import { sanitizeRawTodoItem } from "../utils/sanitizeRawTodoItem";
+import * as  uuid from 'uuid'
 
 export interface TodosContextValue {
   todos: AufgabenTodosRecord;
@@ -28,7 +30,7 @@ export const TodosProvider: React.FC<{
 
       const latestTodos = await res.json();
 
-      setTodos(latestTodos);
+      setTodos(sanitizeRawTodoItem(latestTodos))
       return latestTodos;
     } catch (err) {
       console.error(err);
@@ -51,7 +53,7 @@ export const TodosProvider: React.FC<{
       setTodos((prevTodos) => {
         return {
           ...prevTodos,
-          [updatedTodo.id]: updatedTodo,
+          [updatedTodo.id]: sanitizeRawTodoItem(updatedTodo),
         };
       });
     } catch (err) {
@@ -85,25 +87,34 @@ export const TodosProvider: React.FC<{
 
   const addTodo = async (description: string) => {
     try {
+      const newTodo = {
+        fields: {
+          associatedColumnId: uuid.v4(),
+          columnIndex: 0,
+          completed: false,
+          description,
+        }
+      }
+
       const res = await fetch("/api/createTodo", {
         method: "POST",
-        body: JSON.stringify({ description }),
+        body: JSON.stringify(newTodo.fields),
         headers: {
           "Content-Type": "application/json",
         },
       });
 
-      const newTodo = (await res.json()) as unknown;
+      const createdTodo = (await res.json()) as unknown;
 
-      if (!newTodo || !validateTodo(newTodo)) {
-        console.warn("Invalid todo", newTodo);
+      if (!createdTodo || !validateTodo(createdTodo)) {
+        console.warn("Invalid todo", createdTodo);
         return;
       }
 
       setTodos((prevTodos) => {
         return {
           ...prevTodos,
-          [newTodo.id]: newTodo,
+          [createdTodo.id]: sanitizeRawTodoItem(createdTodo),
         };
       });
     } catch (err) {

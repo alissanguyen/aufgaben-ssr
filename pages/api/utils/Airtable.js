@@ -9,6 +9,11 @@ const getMinifiedRecord = (record) => {
   if (!record.fields.completed) {
     record.fields.completed = false;
   }
+
+  if (record.fields.timeCreated) {
+    record.fields.timeCreated = JSON.parse(JSON.stringify(record.fields.timeCreated))
+  }
+
   return {
     id: record.id,
     fields: record.fields,

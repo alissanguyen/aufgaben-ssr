@@ -9,6 +9,7 @@ import AddTodoForm from "../components/AddTodoForm";
 import { TodosProvider } from "../components/TodosContext";
 import { ISession } from "@auth0/nextjs-auth0/dist/session/session";
 import auth0 from "./api/utils/auth0";
+import { sanitizeRawTodoItem } from "../utils/sanitizeRawTodoItem";
 
 interface HomeProps {
   err?: string;
@@ -17,10 +18,10 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = (props) => {
+
   return (
     <>
       <Head>
-      
         <link rel="icon" href="/logo.svg"/>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#000000" />
@@ -48,8 +49,10 @@ export async function getServerSideProps(context: NextPageContext) {
           .select({ filterByFormula: `userId = "${session.user.sub}"` })
           .firstPage()
       : []; //TODO: Invite new user to register for an account
+
     const initialTodos = todos
       .map(getMinifiedRecord)
+      .map(sanitizeRawTodoItem)
       .reduce<AufgabenTodosRecord>((acc, cur) => {
         acc[cur.id] = cur;
         return acc;

@@ -15,7 +15,7 @@ const ownsRecord = (handler) => auth0.requireAuthentication(async (req, res) => 
         req.record = existingRecord;
         return handler(req, res);
     } catch (error) {
-        console.log(err);
+        console.error(err);
         res.statusCode = 500;
         return res.json({msg: 'Something went wrong'});
     }
