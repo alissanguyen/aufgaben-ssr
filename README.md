@@ -10,7 +10,9 @@ Aufgaben is a simple web-based list-making application and a cloud-enabled app f
 ## Upcoming Changes
 
 - Users can edit single todo
+- Todos prioritizing
 - Todo drag-and-drop
+- Password recovery
 - Improve web visualisation
 
 # New Features!
@@ -18,6 +20,7 @@ Aufgaben is a simple web-based list-making application and a cloud-enabled app f
 - Now having multiple todo columns.
 - Extra authentication and authorization added!
 - Users' todos are synced accross devices.
+- Users can register for new accounts.
 
 ### Tech
 
