@@ -15,6 +15,7 @@ Aufgaben is a simple web-based list-making application and a cloud-enabled app f
 - Password recovery
 - Improve web visualisation
 - Option to delete multiple todos
+- Personal profile
 
 # New Features!
 
