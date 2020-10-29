@@ -68,6 +68,12 @@ export const TodosProvider: React.FC<{
 
   const deleteTodo = async (id: string) => {
     try {
+
+      setLoadingTodoIds((prev) => {
+        const prevCopy = new Set(prev);
+        return prevCopy.add(id);
+      });
+
       await fetch("/api/deleteTodo", {
         method: "DELETE",
         body: JSON.stringify({ id }),
@@ -86,6 +92,13 @@ export const TodosProvider: React.FC<{
     } catch (err) {
       console.error(err);
       throw err;
+    } finally {
+      setLoadingTodoIds((prev) => {
+        const prevCopy = new Set(prev);
+
+        prevCopy.delete(id);
+        return prevCopy;
+      });
     }
   };
 
@@ -106,7 +119,6 @@ export const TodosProvider: React.FC<{
     try {
       setLoadingTodoIds((prev) => {
         const prevCopy = new Set(prev);
-
         return prevCopy.add(tempId);
       });
 
@@ -132,11 +144,8 @@ export const TodosProvider: React.FC<{
         return;
       }
 
-      console.log("loadingtodoids", loadingTodoIds);
-
       setTodos((prevTodos) => {
         const todosClone = { ...prevTodos };
-
         delete todosClone[tempId];
 
         return {
