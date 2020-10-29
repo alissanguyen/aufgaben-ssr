@@ -1,10 +1,11 @@
 import * as React from "react";
-import { AufgabenTodoItem, AufgabenTodoItemFields, AufgabenTodosRecord } from "../types";
+import { AufgabenTodoItem, AufgabenTodosRecord } from "../types";
 import { sanitizeRawTodoItem } from "../utils/sanitizeRawTodoItem";
-import * as  uuid from 'uuid'
+import * as uuid from "uuid";
 
 export interface TodosContextValue {
   todos: AufgabenTodosRecord;
+  loadingTodoIds: Set<string>;
   setTodos: (newTodos: AufgabenTodosRecord) => void;
   refreshTodos: () => Promise<AufgabenTodosRecord>;
   updateTodo: (todo: AufgabenTodoItem) => Promise<void>;
@@ -20,6 +21,9 @@ export const TodosProvider: React.FC<{
   initialTodos: AufgabenTodosRecord;
 }> = (props) => {
   const [todos, setTodos] = React.useState(props.initialTodos);
+  const [loadingTodoIds, setLoadingTodoIds] = React.useState<Set<string>>(
+    new Set([])
+  );
 
   /**
    * Handle when users refresh the page
@@ -30,7 +34,7 @@ export const TodosProvider: React.FC<{
 
       const latestTodos = await res.json();
 
-      setTodos(sanitizeRawTodoItem(latestTodos))
+      setTodos(sanitizeRawTodoItem(latestTodos));
       return latestTodos;
     } catch (err) {
       console.error(err);
@@ -58,7 +62,7 @@ export const TodosProvider: React.FC<{
       });
     } catch (err) {
       console.error(err);
-      throw err
+      throw err;
     }
   };
 
@@ -81,20 +85,35 @@ export const TodosProvider: React.FC<{
       });
     } catch (err) {
       console.error(err);
-      throw err
+      throw err;
     }
   };
 
   const addTodo = async (description: string) => {
+    const columnId = uuid.v4();
+    const tempId = uuid.v4();
+
+    const newTodo = {
+      fields: {
+        associatedColumnId: columnId,
+        columnIndex: 0,
+        completed: false,
+        description,
+      },
+    };
     try {
-      const newTodo = {
-        fields: {
-          associatedColumnId: uuid.v4(),
-          columnIndex: 0,
-          completed: false,
-          description,
-        }
-      }
+      setLoadingTodoIds((prev) => {
+        const prevCopy = new Set(prev);
+
+        return prevCopy.add(tempId);
+      });
+
+      setTodos((prevTodos) => {
+        return {
+          ...prevTodos,
+          [tempId]: newTodo,
+        };
+      });
 
       const res = await fetch("/api/createTodo", {
         method: "POST",
@@ -111,21 +130,42 @@ export const TodosProvider: React.FC<{
         return;
       }
 
+      console.log("loadingtodoids", loadingTodoIds);
+
       setTodos((prevTodos) => {
+        const todosClone = { ...prevTodos };
+
+        delete todosClone[tempId];
+
         return {
-          ...prevTodos,
+          ...todosClone,
           [createdTodo.id]: sanitizeRawTodoItem(createdTodo),
         };
       });
     } catch (err) {
       console.error(err);
-      throw err
+      throw err;
+    } finally {
+      setLoadingTodoIds((prev) => {
+        const prevCopy = new Set(prev);
+
+        prevCopy.delete(tempId);
+        return prevCopy;
+      });
     }
   };
 
   return (
     <TodosContext.Provider
-      value={{ todos, setTodos, refreshTodos, updateTodo, deleteTodo, addTodo }}
+      value={{
+        todos,
+        setTodos,
+        refreshTodos,
+        updateTodo,
+        deleteTodo,
+        addTodo,
+        loadingTodoIds,
+      }}
     >
       {props.children}
     </TodosContext.Provider>

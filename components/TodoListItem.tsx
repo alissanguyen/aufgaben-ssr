@@ -9,6 +9,10 @@ interface Props {
 const TodoListItem: React.FC<Props> = (props) => {
   const todosContext = useTodosContext();
 
+  const isLoading = todosContext.loadingTodoIds.has(props.todo.id);
+
+  console.log("in here", todosContext.loadingTodoIds, props.todo.id);
+
   return (
     <li className="bg-white flex items-center shadow-lg rounded-lg my-2 py-2 px-4">
       <input
@@ -16,7 +20,7 @@ const TodoListItem: React.FC<Props> = (props) => {
         name="completed"
         id="completed"
         checked={props.todo.fields.completed}
-        className="mr-2 form-checkbox h-5 w-5"
+        className={`mr-2 form-checkbox h-5 w-5`}
         onChange={() => {
           todosContext.updateTodo({
             ...props.todo,
