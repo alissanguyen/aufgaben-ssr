@@ -1,4 +1,5 @@
 import "../styles/index.css";
+import "../styles/InlineSpinner.css";
 
 function MyApp({ Component, pageProps }) {
   return (

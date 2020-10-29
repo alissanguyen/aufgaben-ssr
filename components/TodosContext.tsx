@@ -93,12 +93,14 @@ export const TodosProvider: React.FC<{
     const columnId = uuid.v4();
     const tempId = uuid.v4();
 
-    const newTodo = {
+    const newTodo: AufgabenTodoItem = {
+      id: tempId,
       fields: {
         associatedColumnId: columnId,
         columnIndex: 0,
         completed: false,
         description,
+        timeCreatedUtc: Date.now(),
       },
     };
     try {
